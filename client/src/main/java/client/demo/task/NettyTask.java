@@ -14,6 +14,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class NettyTask implements Runnable{
+
+    @Value("${yichen.netty.server.port}")
+    private int port;
 
     @Override
     public void run() {
@@ -45,8 +49,8 @@ public class NettyTask implements Runnable{
                                     .addLast(new ReqHandler());
                         }
                     });
-            ChannelFuture f=b.bind(7421).sync();
-            log.info("公网 netty 启动，暴露端口为7421");
+            ChannelFuture f=b.bind(port).sync();
+            log.info("公网 netty 启动，暴露端口为{}",port);
             f.channel().closeFuture().sync();
         }
         catch (Exception e){
